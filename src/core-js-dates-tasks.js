@@ -138,8 +138,11 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  return new Date(date).toLocaleString('en-US', {
+    hour12: true,
+    timeZone: 'UTC',
+  });
 }
 
 /**
@@ -154,8 +157,18 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const daysInMonth = getCountDaysInMonth(month, year);
+  let weekends = 8;
+  if (daysInMonth > 28) {
+    for (let day = 29; day <= daysInMonth; day += 1) {
+      const weekday = new Date(year, month - 1, day).getDay();
+      if (weekday === 0 || weekday === 6) {
+        weekends += 1;
+      }
+    }
+  }
+  return weekends;
 }
 
 /**
@@ -171,8 +184,10 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const myDate = new Date(date);
+  const newYear = new Date(myDate.getFullYear(), 0, 1);
+  return Math.ceil(getCountDaysOnPeriod(newYear, myDate) / 7);
 }
 
 /**
@@ -186,8 +201,16 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  const myDate = new Date(date);
+  myDate.setDate(13);
+  while (date) {
+    if (myDate.getDay() === 5) {
+      break;
+    }
+    myDate.setMonth(myDate.getMonth() + 1);
+  }
+  return myDate;
 }
 
 /**
@@ -201,8 +224,8 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  return Math.ceil((1 + date.getMonth()) / 3);
 }
 
 /**
